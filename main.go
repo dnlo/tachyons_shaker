@@ -1,16 +1,16 @@
-// Parses a set of html files and a css tachyons file 
+// Parses a set of html files and a css tachyons file
 // and returns the css for the classes used in the html files
 // It takes a list of html files from the stdIn and a single css file as argument
 package main
 
 import (
-	"fmt"
-	"os"
 	"bufio"
 	"bytes"
-	"strings"
+	"fmt"
+	"os"
 	"regexp"
-	
+	"strings"
+
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -30,7 +30,7 @@ func main() {
 		htmlFiles = append(htmlFiles, file)
 		c += 1
 	}
-	
+
 	//extract class names from html files, put it in used !used contains duplicates
 	for i := range htmlFiles {
 		file, err := os.Open(htmlFiles[i])
@@ -43,11 +43,16 @@ func main() {
 		for n := range docClasses.Nodes {
 			cl, _ := docClasses.Eq(n).Attr("class")
 			sp := strings.Split(cl, " ")
-			used = append(used, sp...) 
+			used = append(used, sp...)
 		}
 	}
-	
+
 	// parse css
+	if len(os.Args) < 2 {
+		fmt.Println("I need a path to an unminified tachyons file as an argument")
+		return
+	}
+
 	css, err := os.Open(os.Args[1])
 	if err != nil {
 		fmt.Println("Error opening css file", err)
@@ -88,7 +93,7 @@ func main() {
 	nsList = append(nsList, "}")
 	mList = append(mList, "}")
 	lList = append(lList, "}")
-	
+
 	// print the used classes, and nested
 	for _, v := range standard {
 		fmt.Println(v)
@@ -107,10 +112,11 @@ func main() {
 	if hasClass(mList) {
 		fmt.Println(strings.Join(mList, "\n"))
 	}
-	if hasClass(lList) {	
+	if hasClass(lList) {
 		fmt.Println(strings.Join(lList, "\n"))
 	}
 }
+
 // nested is always included
 const nested = `.nested-copy-line-height p, .nested-copy-line-height ul,
 .nested-copy-line-height ol { line-height: 1.5; }

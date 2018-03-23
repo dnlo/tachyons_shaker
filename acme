@@ -1,0 +1,8 @@
+go doc strings.Join
+go install
+go build
+echo "index.html fasdfdsa" | go run main.go tachyons.css
+touch index.html
+touch README.md
+win
+
