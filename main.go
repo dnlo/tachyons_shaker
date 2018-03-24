@@ -43,6 +43,19 @@ func main() {
 		for n := range docClasses.Nodes {
 			cl, _ := docClasses.Eq(n).Attr("class")
 			sp := strings.Split(cl, " ")
+			// nasty hack
+			var pseudo []string
+			for c := range sp {
+				pseudo = append(pseudo, sp[c]+":active")
+				pseudo = append(pseudo, sp[c]+":after")
+				pseudo = append(pseudo, sp[c]+":hover")
+				pseudo = append(pseudo, sp[c]+":link")
+				pseudo = append(pseudo, sp[c]+":focus")
+				pseudo = append(pseudo, sp[c]+":visited")
+				pseudo = append(pseudo, sp[c]+":before")
+				pseudo = append(pseudo, sp[c]+":nth-child")
+			}
+			sp = append(sp, pseudo...)
 			used = append(used, sp...)
 		}
 	}
@@ -71,7 +84,7 @@ func main() {
 				continue
 			}
 			if bytes.Contains(s.Bytes(), []byte("."+v)) {
-				if ok, _ := regexp.Match(`\.`+v+` `, s.Bytes()); ok {
+				if ok, _ := regexp.Match(`\.`+v+` |\.`+v+`:`, s.Bytes()); ok {
 					parsed[v] = true
 					if bytes.HasPrefix(s.Bytes(), []byte(" ")) {
 						switch {
